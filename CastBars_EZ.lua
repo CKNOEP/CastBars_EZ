@@ -4,7 +4,7 @@ local nointerrupt_color = { .9, 0, 0, 1}
 local default_color = { 1, .7, 0, 1}
 
 local show_text = true
-local show_timer = false
+local show_timer = true
 
 local castbars = { 
 	player = true, 
@@ -94,12 +94,15 @@ local MakeCastBar = function(unit, enable)
 	frame:SetScript("OnShow", function(self)
 		if not self.locked then return end
 		if self.casting then
-			local _, _, _, _, st = UnitCastingInfo(self.unit)
+			local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitCastingInfo(unit)
+			local _, _, _, st = UnitCastingInfo(self.unit)
+			print (st)
 			if st then
 				self.value = (GetTime() - (st / 1000))
+				
 			end
 		else
-			local _, _, _, _, _, et = UnitChannelInfo(self.unit)
+			local _, _, _, _, et = UnitChannelInfo(self.unit)
 			if et then
 				self.value = ((et / 1000) - GetTime())
 			end
@@ -107,30 +110,31 @@ local MakeCastBar = function(unit, enable)
 	end)
 	
 	frame:SetScript("OnEvent", function(self, event, ...)
-	print(event)
+	--print(event)
 		local arg1 = ...
 		if not self.locked then return end
 		local unit = self.unit
-		if  event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_TARGET_CHANGED" then
-			local spellChannel  = UnitChannelInfo(unit)
-			local spellName  = UnitCastingInfo(unit)
-			if  spellChannel then
-				event = "UNIT_SPELLCAST_CHANNEL_START"
-				arg1 = unit
-			elseif spellName then
-				event = "UNIT_SPELLCAST_START"
-				arg1 = unit
-			else
-				CastingBarFinishSpell(self)
+			if  event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_TARGET_CHANGED" then
+				local spellChannel  = UnitChannelInfo(unit)
+				local spellName  = UnitCastingInfo(unit)
+				if  spellChannel then
+					event = "UNIT_SPELLCAST_CHANNEL_START"
+					arg1 = unit
+				elseif spellName then
+					event = "UNIT_SPELLCAST_START"
+					arg1 = unit
+				else
+					CastingBarFinishSpell(self)
+				end
 			end
-		end
-
-		if arg1 ~= unit then return end
 		
+		if arg1 ~= unit then return end
+
 		if event == "UNIT_SPELLCAST_START" then
-		print("Start Cast:",unit)
+		--print(event)
+		--print("Start Cast:",unit)
 			local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitCastingInfo(unit)
-			print ("n:",name, " text:",text, " texture:",texture, " ST:",startTime, " ET:",endTime, " ITS:",isTradeSkill, " CastID:",castID)
+			--print ("n:",name, " text:",text, " texture:",texture, " ST:",startTime, " ET:",endTime, " ITS:",isTradeSkill, " CastID:",castID)
 			if not name then
 				self:Hide()
 				return
@@ -140,10 +144,15 @@ local MakeCastBar = function(unit, enable)
 			
 			self.bar:SetStatusBarColor(unpack(default_color))
 			self.bar.spark:Show()
+			
 			if self.lag then self.lag:Show() end
-			self.value = GetTime() - (startTime / 1000)
+			
+			--self.value = GetTime() - (startTime / 1000)
+			self.value = 0
 			self.maxValue = (endTime - startTime) / 1000
 			self.bar:SetMinMaxValues(0, self.maxValue)
+			local statusMin, statusMax = self.bar:GetMinMaxValues()
+			print ("start ", statusMin, statusMax,self.value)
 			self.bar:SetValue(self.value)
 			self.bar.text:SetText(text)
 			self.icon:SetTexture(texture)
@@ -153,20 +162,20 @@ local MakeCastBar = function(unit, enable)
 			self.castID = castID
 			self.channeling = nil
 			self.fadeOut = nil
-			--if notInterruptible then WOLTK
-				self.bar:SetStatusBarColor(unpack(nointerrupt_color)) 
+			--if notInterruptible then -- addded in WOLTK--
+				--self.bar:SetStatusBarColor(unpack(nointerrupt_color)) 
 			--else 
 				self.bar:SetStatusBarColor(unpack(default_color))
 			--end
-			print("Gettime" , GetTime())
-			print("StartTime" , startTime)
-			print("EndTime" , endTime)
-			print("max" , self.maxValue)
-			print("min" , self.value*1000)
+			
+			
 			if self.showCastbar then self:Show() end
-		elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
+		
+		elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" then
+		print(event, arg1,unit)	
 			if not self:IsVisible() then
 				self:Hide()
+			print ("hide")
 			end
 			if (self.casting and event == "UNIT_SPELLCAST_STOP" and select(4, ...) == self.castID) or (self.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP") then
 				if self.bar.spark then
@@ -223,10 +232,10 @@ local MakeCastBar = function(unit, enable)
 				end
 			end
 		elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
-			print ("chanelstart:",unit)
+			--print ("chanelstart:",unit)
 		
 			local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitChannelInfo(unit)
-			
+			--print (name, text, texture, startTime, endTime, isTradeSkill, castID)
 			if not name then
 				self:Hide()
 				return
@@ -240,7 +249,7 @@ local MakeCastBar = function(unit, enable)
 			self.maxValue = (endTime - startTime) / 1000
 			self.bar:SetMinMaxValues(0, self.maxValue)
 			self.bar:SetValue(self.value)
-			self.bar.text:SetText(text)
+			self.bar.text:SetText(name)
 			self.icon:SetTexture(texture)
 			self.bar.spark:Hide()
 			self:SetAlpha(1)
@@ -248,53 +257,50 @@ local MakeCastBar = function(unit, enable)
 			self.casting = nil
 			self.channeling = 1
 			self.fadeOut = nil
-			print("Gettime" , GetTime())
-			print("StartTime" , startTime)
-			print("EndTime" , endTime)
-			print("max" , self.maxValue)
-			print("min" , self.value*1000)
-			if notInterruptible then 
-				self.bar:SetStatusBarColor(unpack(nointerrupt_color)) 
-			else 
-				self.bar:SetStatusBarColor(unpack(default_color)) 
-			end
+		
+			self.bar:SetStatusBarColor(unpack(default_color)) 
+			
 			if self.showCastbar then self:Show() end
 		elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
-		  print ("chanel_Updatestart:",unit)
-		  if self:IsShown() then
+		  --print ("chanel_Updatestart:",unit)
+			    if self:IsShown() then
+					
+					local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitChannelInfo(unit)
+					if not name then
+						self:Hide()
+						return
+					end
+					self.value = (endTime / 1000) - GetTime()
+					self.maxValue = (endTime - startTime) / 1000
+					self.bar:SetMinMaxValues(0, self.maxValue)
+					self.bar:SetValue(self.value)
 				
-				local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitChannelInfo(unit)
-				if not name then
-					self:Hide()
-					return
+				--print("Gettime" , GetTime())
+				--print("StartTime" , startTime)
+				--print("EndTime" , endTime)
+				--print("max" , self.maxValue)
+				--print("min" , self.value*1000)
 				end
-				self.value = (endTime / 1000) - GetTime()
-				self.maxValue = (endTime - startTime) / 1000
-				self.bar:SetMinMaxValues(0, self.maxValue)
-				self.bar:SetValue(self.value)
-			
-			print("Gettime" , GetTime())
-			print("StartTime" , startTime)
-			print("EndTime" , endTime)
-			print("max" , self.maxValue)
-			print("min" , self.value*1000)
-			end
-		--elseif event == "UNIT_SPELLCAST_INTERRUPTIBLE" then 
-			--self.bar:SetStatusBarColor(unpack(default_color)) 
+		elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
+			print ("interrupted hide")
+			self.bar:Hide()
+		
 		elseif unit ~= 'player'  then 
 			self.bar:SetStatusBarColor(unpack(nointerrupt_color))
 		end
 	end)
 	
 	frame:SetScript("OnUpdate", function(self, elapsed)
-		--print("elapsed", elapsed)
+		
 		if not self.locked then return end
 		
 		if not self.bar.timer then return end
+		--if self.timerUpdate > elapsed  then print(elapsed-self.timerUpdate) end
 		
 		if self.timerUpdate and self.timerUpdate < elapsed then
+				--print("update " ,self.maxValue , self.value  , elapsed)	
 			if self.casting then
-				self.bar.timer:SetText(format("%.1f", max(self.maxValue - self.value, 0)))
+				self.bar.timer:SetText(format("%.1f", max(self.maxValue - (self.value), 0)))
 			elseif self.channeling then
 				self.bar.timer:SetText(format("%.1f", max(self.value, 0)))
 			else
@@ -316,7 +322,7 @@ local MakeCastBar = function(unit, enable)
 			self.bar:SetValue(self.value)
 			self.bar.flash:Hide()
 			self.bar.spark:SetPoint("CENTER", self.bar:GetStatusBarTexture(), "RIGHT", 0, 0)
-			if self.unit == "player" then
+			if self.unit == "player" then -- then screen lagbar
 				local down, up, lag = GetNetStats()
 				local castingmin, castingmax = self.bar:GetMinMaxValues()
 				local lagvalue = ( lag / 1000 ) / ( castingmax - castingmin )

@@ -112,7 +112,7 @@
 				self.bar.spark:SetPoint('CENTER', self.bar.bartex, 'RIGHT', 0, 0)
 			</OnSizeChanged>
 			<OnLoad>
-				--self:RegisterForDrag("LeftButton")
+				self:RegisterForDrag("LeftButton")
 			</OnLoad>
 			<OnDragStart>
 				self:StartMoving()
