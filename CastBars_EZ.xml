@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ http://wowprogramming.com/FrameXML/UI.xsd">
+	<Frame name="ezCastBarTemplate" virtual="true" hidden="true" resizable="true" movable="true" enableMouse="true" clampedToScreen="true">
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Size>
+			<AbsDimension x="250" y="20"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBorder">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="-2" y="2"/>
+							</Offset>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="2" y="-2"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Color r="0" g="0" b="0"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentIcon" parentKey="icon" file="Interface\ICONS\Trade_engineering">
+					<TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<ResizeBounds>
+			<minResize>
+				<AbsDimension x="100" y="10"/>
+			</minResize>
+			<maxResize>
+				<AbsDimension x="800" y="50"/>
+			</maxResize>
+		</ResizeBounds>
+		<Frames>
+			<StatusBar parentKey="bar">
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentBackground" file="Interface\RAIDFRAME\Raid-Bar-Hp-Fill" setAllPoints="true" parentKey="bg">
+							<Color r="1" g="1" b="1" a=".2"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture name="$parentFlash" parentKey="flash" file="Interface\RAIDFRAME\Raid-Bar-Hp-Fill" alphaMode="ADD" setAllPoints="true" hidden="true">
+							<Color r="1" g="1" b="1" a="1"/>
+						</Texture>
+						<Texture name="$parentSpark" parentKey="spark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+							<Size>
+								<AbsDimension x="32" y="32"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<FontString name="$parentText" inherits="GameFontHighlight" parentKey="text" setAllPoints="true" />
+						<FontString name="$parentTime" inherits="GameFontNormal" parentKey="timer">
+							<Anchors>
+								<Anchor point="RIGHT">
+									<Offset>
+										<AbsDimension x="-3" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<BarTexture file="Interface\RAIDFRAME\Raid-Bar-Hp-Fill" name="$parentTexture" parentKey="bartex"/>
+				<BarColor r="1" g="0.7" b="0"/>
+			</StatusBar>
+			<Button name="$parentResizeButton" parentKey="resize" hidden="false">
+				<Size x="12" y="12"/>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnMouseDown>
+						self:SetButtonState("PUSHED", true)
+						self:GetHighlightTexture():Hide()
+						self:GetParent():StartSizing("BOTTOMRIGHT")
+					</OnMouseDown>
+					<OnMouseUp>
+						self:SetButtonState("NORMAL", false)
+						self:GetHighlightTexture():Show()
+						self:GetParent():StopMovingOrSizing()
+
+					</OnMouseUp>
+				</Scripts>
+				<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+				<HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+				<PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnSizeChanged>
+				self.icon:ClearAllPoints()
+				self.icon:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, 0)
+				self.icon:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', self:GetHeight(), 0)
+				self.bar:ClearAllPoints()
+				self.bar:SetPoint('TOPLEFT', self.icon, 'TOPRIGHT', 2, 0)
+				self.bar:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 0)
+				self.bar.spark:ClearAllPoints()
+				self.bar.spark:SetSize(self:GetHeight(), self:GetHeight()*2)
+				self.bar.spark:SetPoint('CENTER', self.bar.bartex, 'RIGHT', 0, 0)
+			</OnSizeChanged>
+			<OnLoad>
+				--self:RegisterForDrag("LeftButton")
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>

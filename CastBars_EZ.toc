@@ -1,0 +1,8 @@
+## Interface: 5.1.0 BC classic
+## Title: CastBars_EZ
+## Notes: Move casting bars Easy
+## Author: l'ancêtre , Fernir
+## Version: 2
+
+CastBars_EZ.xml
+CastBars_EZ.lua
