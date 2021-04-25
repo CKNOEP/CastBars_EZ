@@ -1,8 +1,12 @@
+local addon = LibStub("AceAddon-3.0"):NewAddon("CastBars_EZ", "AceConsole-3.0")
+local icon = LibStub("LibDBIcon-1.0")
+local CastBarsEZLDB = LibStub("LibDataBroker-1.1", true)
+
+
 local CastBars_EZ = _G['CastBars_EZ'] or CreateFrame('frame', 'CastBars_EZ', UIParent)
 local addonName, ns = ...
 local nointerrupt_color = { .9, 0, 0, 1}
 local default_color = { 1, .7, 0, 1}
-
 local show_text = true
 local show_timer = true
 
@@ -13,26 +17,158 @@ local castbars = {
 	pet = true, 
 }
 
-local CastingBarHideContent = function(self)
-	if not self.locked then
-		self:SetAlpha(1)
-		self.bar.flash:Hide()
-		self.bar.spark:Hide()
-		self.bar.timer:Hide()
-		if self.lag then self.lag:Hide() end
-		self.bar:SetStatusBarColor(.2,.2,.2)
-		self.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
-		self.resize:Show();
+local defaults = {
+profile = 
+	{
+		minimap = {---minimap variables
+		hide = false,		
+		minimapPos = 203,
+			      },
+			
+		castbars = 	{ 
+		show_player = true, 
+		show_target = true, 
+		show_focus = true, 
+		show_pet = true, 
+					},
+		frameCoord={},
+	}
+}
+
+local CastingBarShowContent = function(selfB)
+	if not selfB.locked then
+		selfB:SetAlpha(1)
+		selfB.bar.flash:Hide()
+		selfB.bar.spark:Hide()
+		selfB.bar.timer:Hide()
+		if selfB.lag then selfB.lag:Hide() end
+		selfB.bar:SetStatusBarColor(.2,.2,.2)
+		selfB.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
+		selfB.resize:Show();
 	else
-		self:SetAlpha(0)
-		self.bar.flash:Show()
-		self.bar.spark:Show()
-		if show_timer then self.bar.timer:Show() end
-		if self.lag then self.lag:Show() end
-		self.bar:SetStatusBarColor(unpack(default_color))
-		self.resize:Hide()
+		selfB:SetAlpha(0)
+		selfB.bar.flash:Show()
+		selfB.bar.spark:Show()
+		if show_timer then selfB.bar.timer:Show() end
+		if selfB.lag then selfB.lag:Show() end
+		selfB.bar:SetStatusBarColor(unpack(default_color))
+		selfB.resize:Hide()
+		
+		selfB:SetScript("OnDragStop", function(self)
+		self.isMoving=false;
+		self:StopMovingOrSizing();
+				
+		end)
+		
 	end
 end
+
+function addon:OnInitialize()
+
+addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
+
+local CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
+type = "data source",
+text = "CastBars_EZ",
+icon = "Interface\\Icons\\Spell_nature_lightning",
+OnClick = 	function(_, button)                
+
+					--if button == "LeftButton" then 
+					
+					--end
+					--if button == "RightButton" then 
+					
+					for unit, enable in pairs(castbars) do
+					
+					local castbar = _G[unit.."ezCastBar"]
+					
+					castbar.locked = not castbar.locked
+					if enable then
+						if castbar then
+								
+								castbar:RegisterForDrag("LeftButton")
+								castbar:EnableMouse(true)
+								castbar.bar.text:SetText(unit)
+								castbar:Show()
+								CastingBarShowContent(castbar)
+								
+							
+							end
+						end
+					end
+					
+						
+					
+					--end	 
+			end,
+OnTooltipShow = function(tt)
+                tt:AddLine("CastBarsEZ version  : |cffffff00".."2".."|r")
+                tt:AddLine("|cffffff00Click|r to Hide/Show and move the castbars.")
+
+				end,
+})
+
+
+icon:Register("CastBars_EZ", CastBarsEZLDB, self.db.profile.minimap)
+self:RegisterChatCommand("CastBars_EZ", "CommandTheCastBars_EZ")
+
+end
+
+
+
+
+
+local CastingBarHideContent = function(selfB)
+	if not selfB.locked then
+		selfB:SetAlpha(1)
+		selfB.bar.flash:Hide()
+		selfB.bar.spark:Hide()
+		selfB.bar.timer:Hide()
+		if selfB.lag then selfB.lag:Hide() end
+		selfB.bar:SetStatusBarColor(.2,.2,.2)
+		selfB.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
+		selfB.resize:Show();
+	else
+		selfB:SetAlpha(0)
+		selfB.bar.flash:Show()
+		selfB.bar.spark:Show()
+		if show_timer then selfB.bar.timer:Show() end
+		if selfB.lag then selfB.lag:Show() end
+		selfB.bar:SetStatusBarColor(unpack(default_color))
+		selfB.resize:Hide()
+		
+		selfB:SetScript("OnDragStop", function(selfB)
+		selfB.isMoving=false;
+		selfB:StopMovingOrSizing();
+		
+		-- SAve position
+		local point, relativeTo, relativePoint, xOfs, yOfs = selfB:GetPoint()
+		--print(point, relativeTo, relativePoint, xOfs, yOfs)
+
+		
+		
+		addon.db.profile.frameCoord[selfB.unit] ={}
+		addon.db.profile.frameCoord[selfB.unit].Point = point
+		addon.db.profile.frameCoord[selfB.unit].RelativePoint = relativePoint
+		addon.db.profile.frameCoord[selfB.unit].xOfs = xOfs
+		addon.db.profile.frameCoord[selfB.unit].yOfs = yOfs
+		
+		--opts.relativePoint = relativePoint
+		
+		
+		end)
+		
+	end
+end
+-- Create minimap button
+
+
+
+
+
+-- Castbar function
+
+
 
 local CastingBarFinishSpell = function(self, barSpark, barFlash)
 	self.bar:SetStatusBarColor(0, 1, 0)
@@ -96,7 +232,7 @@ local MakeCastBar = function(unit, enable)
 		if self.casting then
 			local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitCastingInfo(unit)
 			local _, _, _, st = UnitCastingInfo(self.unit)
-			print (st)
+			--print (st)
 			if st then
 				self.value = (GetTime() - (st / 1000))
 				
@@ -152,7 +288,7 @@ local MakeCastBar = function(unit, enable)
 			self.maxValue = (endTime - startTime) / 1000
 			self.bar:SetMinMaxValues(0, self.maxValue)
 			local statusMin, statusMax = self.bar:GetMinMaxValues()
-			print ("start ", statusMin, statusMax,self.value)
+			--print ("start ", statusMin, statusMax,self.value)
 			self.bar:SetValue(self.value)
 			self.bar.text:SetText(text)
 			self.icon:SetTexture(texture)
@@ -172,11 +308,17 @@ local MakeCastBar = function(unit, enable)
 			if self.showCastbar then self:Show() end
 		
 		elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" then
-		print(event, arg1,unit)	
-			if not self:IsVisible() then
+		--print(event, arg1,unit)	
+			if self:IsVisible() then
+		
+		
 				self:Hide()
-			print ("hide")
+			--print ("hide")
+				self.flashing = 1
+				self.fadeOut = 1
+				self.holdTime = 0
 			end
+			
 			if (self.casting and event == "UNIT_SPELLCAST_STOP" and select(4, ...) == self.castID) or (self.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP") then
 				if self.bar.spark then
 					self.bar.spark:Hide()
@@ -266,6 +408,7 @@ local MakeCastBar = function(unit, enable)
 			    if self:IsShown() then
 					
 					local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitChannelInfo(unit)
+					--print (name, text, texture, startTime, endTime, isTradeSkill, castID)
 					if not name then
 						self:Hide()
 						return
@@ -282,7 +425,7 @@ local MakeCastBar = function(unit, enable)
 				--print("min" , self.value*1000)
 				end
 		elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
-			print ("interrupted hide")
+			--print ("interrupted hide")
 			self.bar:Hide()
 		
 		elseif unit ~= 'player'  then 
@@ -362,20 +505,26 @@ local MakeCastBar = function(unit, enable)
 			end
 		end
 	end)
+
 end
 
 --CastBars_EZ:RegisterEvent('PLAYER_TALENT_UPDATE') not present in classic
 CastBars_EZ:RegisterEvent('PLAYER_ENTERING_WORLD')
 CastBars_EZ:RegisterEvent('ADDON_LOADED')
 CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
+
+
+
 	if (event=='ADDON_LOADED' and arg1 == addonName) or event == 'PLAYER_ENTERING_WORLD' then
 	--if (event=='ADDON_LOADED' and arg1 == addonName) or event == 'PLAYER_ENTERING_WORLD' or event=='PLAYER_TALENT_UPDATE' then
-		
+		--print ("Addon loaded" , castbars.player )
 		if castbars.player == true then 
 			CastingBarFrame.showCastbar = false 
 			CastingBarFrame:UnregisterAllEvents()
-			CastingBarFrame:SetScript("OnUpdate", function() end)
+			TargetFrameSpellBar:SetScript("OnUpdate", function() end)
+		
 		end
+		
 
 		if castbars.target == true then 
 			TargetFrameSpellBar.showCastbar = false 
@@ -412,6 +561,7 @@ SlashCmdList["CastBars_EZ"] = function(cmd)
 		if enable then
 			local castbar = _G[unit.."ezCastBar"]
 			if castbar then
+			--print(castbar)
 				castbar.locked = not castbar.locked
 				if castbar.locked then
 					castbar:RegisterForDrag("")

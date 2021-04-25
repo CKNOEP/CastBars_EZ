@@ -3,6 +3,8 @@
 ## Notes: Move casting bars Easy
 ## Author: l'ancêtre , Fernir
 ## Version: 2
+## SavedVariables: CastBars_EZDB
 
+embeds.xml
 CastBars_EZ.xml
 CastBars_EZ.lua
