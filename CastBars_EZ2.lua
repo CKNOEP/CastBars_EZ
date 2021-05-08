@@ -57,7 +57,7 @@ local castbars = {
 								--call function after profil 
 								if addon.db.profile.show_player ~= value then
 								addon.db.profile.show_player = value
-								
+								castbar[player] = addon.db.profile.show_player
 								end
 							end,
 						order = 11,
@@ -73,7 +73,7 @@ local castbars = {
 							set = function(info, value)
 								if addon.db.profile.show_target ~= value then
 								addon.db.profile.show_target = value
-								
+								castbar[player] = addon.db.profile.show_player
 								end
 							end,
 						 order = 12,   
@@ -89,7 +89,7 @@ local castbars = {
 							set = function(info, value)
 								if addon.db.profile.show_focus ~= value then
 								addon.db.profile.show_focus = value
-								
+								castbar[player] = addon.db.profile.show_player
 								end
 							end,
 						order = 13,    
@@ -105,7 +105,8 @@ local castbars = {
 							set = function(info, value)
 							if addon.db.profile.show_pet ~= value then
 								addon.db.profile.show_pet = value
-								
+								castbar[player] = addon.db.profile.show_player
+															
 							end
 							end,
 						 order = 14,   
@@ -169,35 +170,7 @@ local castbars = {
 				show_pet = true, 
 				colorcastbarCB = default_color_CB,
 				colorcastbarTB = default_color_TB,
-				
-				player = {
-						h = 12,
-						w = 200,
-						xOfs = 0,	
-						yOfs = 0,
-						RelativePoint = "CENTER"
-				},
-				target = {
-						h = 12,
-						w = 200,
-						xOfs = 0,	
-						yOfs = 0,
-						RelativePoint = "CENTER"
-				},
-				focus = {
-						h = 12,
-						w = 200,
-						xOfs = 0,	
-						yOfs = 0,
-						RelativePoint = "CENTER"
-				},
-				pet = {
-						h = 12,
-						w = 200,
-						xOfs = 0,	
-						yOfs = 0,
-						RelativePoint = "CENTER"
-				}				
+				frameCoord={},
 			
 			}
 		}
@@ -242,7 +215,7 @@ function addon:OnInitialize()
 		pet = addon.db.profile.show_pet, 	
 		focus = addon.db.profile.show_focus,
 		}
-		
+	
 	default_color_CB = addon.db.profile.colorcastbarCB
 	default_color_TB = addon.db.profile.colorcastbarTB
 	
@@ -369,17 +342,15 @@ local CastingBarHideContent = function(selfB)
 		local W = selfB:GetWidth()
 		local H = selfB:GetHeight()
 		
+		addon.db.profile.frameCoord[selfB.unit] ={}
+		addon.db.profile.frameCoord[selfB.unit].Point = point
+		addon.db.profile.frameCoord[selfB.unit].RelativePoint = relativePoint
+		addon.db.profile.frameCoord[selfB.unit].xOfs = xOfs
+		addon.db.profile.frameCoord[selfB.unit].yOfs = yOfs
+		addon.db.profile.frameCoord[selfB.unit].w = W
+		addon.db.profile.frameCoord[selfB.unit].h = H		
 		
-		
-		
-		addon.db.profile[selfB.unit] ={}
-		addon.db.profile[selfB.unit].Point = point
-		addon.db.profile[selfB.unit].RelativePoint = relativePoint
-		addon.db.profile[selfB.unit].xOfs = xOfs
-		addon.db.profile[selfB.unit].yOfs = yOfs
-		addon.db.profile[selfB.unit].w = W
-		addon.db.profile[selfB.unit].h = H		
-		
+	
 		
 		
 		end)
@@ -407,50 +378,50 @@ local MakeCastBar = function(unit, enable)
 	print("Make",unit)
 	-- Ajouter ici 
 	if unit == "player" then
-		x = addon.db.profile[unit].xOfs	
-		y = addon.db.profile[unit].yOfs
-		rel= addon.db.profile[unit].RelativePoint
-		H = addon.db.profile[unit].h
-		W = addon.db.profile[unit].w
-		ColorCB = addon.db.profile.colorcastbarCB
-		
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W = addon.db.profile.frameCoord[unit].w
+		C = addon.db.profile.colorcastbarCB
 
-	--frame:SetStatusBarColor(unpack(C))
+	frame:SetStatusBarColor(unpack(C))
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
 	end
 	
 	if unit == "target" then
-		x  		= addon.db.profile.target.xOfs	
-		y  		= addon.db.profile.target.yOfs
-		rel		= addon.db.profile.target.RelativePoint
-		H  		= addon.db.profile.target.h
-		W  		= addon.db.profile.target.w
-		ColorCB = addon.db.profile.colorcastbarTB
-	
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W =addon.db.profile.frameCoord[unit].w
+		C = addon.db.profile.colorcastbarTB
+
+	frame:SetStatusBarColor(unpack(C))
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
 	end	
 	
 	if unit == "pet" then
-		x = addon.db.profile[unit].xOfs	
-		y = addon.db.profile[unit].yOfs
-		rel= addon.db.profile[unit].RelativePoint
-		H = addon.db.profile[unit].h
-		W =addon.db.profile[unit].w
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W =addon.db.profile.frameCoord[unit].w
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
 	end	
 	
 	if unit == "focus" then
-		x = addon.db.profile[unit].xOfs	
-		y = addon.db.profile[unit].yOfs
-		rel= addon.db.profile[unit].RelativePoint
-		H = addon.db.profile[unit].h
-		W =addon.db.profile[unit].w
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W =addon.db.profile.frameCoord[unit].w
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
@@ -496,6 +467,7 @@ local MakeCastBar = function(unit, enable)
 	frame.channeling = nil
 	frame.holdTime = 0
 	frame.showCastbar = castbars[unit]
+	print("init frame",frame.showCastbar,unit) 
 	frame.locked = true
 	CastingBarHideContent(frame)
 	frame:Hide()
@@ -689,7 +661,7 @@ local MakeCastBar = function(unit, enable)
 			self.channeling = 1
 			self.fadeOut = nil
 		
-			self.bar:SetStatusBarColor(unpack(default_color_CB)) 
+			self.bar:SetStatusBarColor(unpack(default_color)) 
 			
 			if self.showCastbar then self:Show() end
 		elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
@@ -808,7 +780,7 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 	--if (event=='ADDON_LOADED' and arg1 == addonName) or event == 'PLAYER_ENTERING_WORLD' or event=='PLAYER_TALENT_UPDATE' then
 		--print ("Addon loaded" , castbars.player )
 		
-		
+		print("CBentering",castbars.player,castbars.target,castbars.focus,castbars.pet)
 		
 		if castbars.player == true then 
 			CastingBarFrame.showCastbar = false 
@@ -854,13 +826,11 @@ SLASH_CastBars_EZ1 = "/ezcb";
 SlashCmdList["CastBars_EZ"] = function(cmd)
 	for unit, enable in pairs(castbars) do
 		
-		
+		print("pcb",castbars,unit,enable)
 		if enable then
 			local castbar = _G[unit.."ezCastBar"]
-			
-			
 			if castbar then
-			
+			--print(castbar,castbar.locked)
 				castbar.locked = not castbar.locked
 				if castbar.locked then
 					castbar:RegisterForDrag("")
