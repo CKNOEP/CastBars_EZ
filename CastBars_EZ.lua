@@ -1,120 +1,310 @@
 local addon = LibStub("AceAddon-3.0"):NewAddon("CastBars_EZ", "AceConsole-3.0")
 local icon = LibStub("LibDBIcon-1.0")
 local CastBarsEZLDB = LibStub("LibDataBroker-1.1", true)
-
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 local CastBars_EZ = _G['CastBars_EZ'] or CreateFrame('frame', 'CastBars_EZ', UIParent)
 local addonName, ns = ...
 local nointerrupt_color = { .9, 0, 0, 1}
-local default_color = { 1, .7, 0, 1}
+local default_color_CB = { 1, .7, 0, 1}
+local default_color_TB = { 1, .7, 0, 1}
 local show_text = true
 local show_timer = true
 
 local castbars = { 
+	-- default value 
 	player = true, 
-	target = true, 
+	target = true,
+	pet = true, 	
 	focus = true, 
-	pet = true, 
-}
 
-local defaults = {
-profile = 
-	{
-		minimap = {---minimap variables
-		hide = false,		
-		minimapPos = 203,
-			      },
-			
-		castbars = 	{ 
-		show_player = true, 
-		show_target = true, 
-		show_focus = true, 
-		show_pet = true, 
-					},
-		frameCoord={},
-	}
 }
+		local options = {
+		
+			handler = CastBarsEZ,
+			type = "group",
+			args = {
+			layoutmode = {
+					type = "toggle",
+					name = "layoutmode : move and resize castbars",
+					width = "full",
+					desc = "layoutmode : move and resize castbars",
+					get = function()
+					
+					end,
+					set = function(info, value)
+					
+					end,
+					order = 5
+			},
+			visibility = {
+					type = "group",
+					name = "Visibility",
+					desc = "Show/Hide the differents castbars",
+					order = 10,
+					args = {
+						player_cb = {
+							type = "toggle",
+							
+							name = "Player Cast Bar",
+							desc = "Show/Hide Player Cast Bar",
+							get = function()
+								return addon.db.profile.show_player
+							end,
+							set = function(info, value)
+								
+								--call function after profil 
+								if addon.db.profile.show_player ~= value then
+								addon.db.profile.show_player = value
+								end
+							end,
+						order = 11,
+						},
+						target_cb = {
+							type = "toggle",
+							
+							name = "Target Cast Bar",
+							desc = "Show/Hide Target Cast Bar",
+							get = function()
+								return addon.db.profile.show_target
+							end,
+							set = function(info, value)
+								if addon.db.profile.show_target ~= value then
+								addon.db.profile.show_target = value
+								end
+							end,
+						 order = 12,   
+						},
+						focus_cb = {
+							type = "toggle",
+							
+							name = "Focus Cast Bar",
+							desc = "Show/Hide Focus Cast Bar",
+							get = function()
+								return addon.db.profile.show_focus
+							end,
+							set = function(info, value)
+								if addon.db.profile.show_focus ~= value then
+								addon.db.profile.show_focus = value
+								end
+							end,
+						order = 13,    
+						},
+						pet_cb = {
+							type = "toggle",
+							
+							name = "Pet Cast Bar",
+							desc = "Show/Hide Pet Cast Bar",
+							get = function()
+								return addon.db.profile.show_pet
+							end,
+							set = function(info, value)
+							if addon.db.profile.show_pet ~= value then
+								addon.db.profile.show_pet = value
+								end
+							end,
+						 order = 14,   
+						},
+					}
+			},
+			colors = {
+					type ="group",
+					name = "Castbars Colors",
+					desc = "change colors of the differents castbars",
+					args = {
+						playerCBcolor = {
+						type = "color",
+						hasAlpha = true,
+						name = "Player Bar Color",
+						desc = "Change the color of CastBar.",
+						get = function(info) 
+							--return default_color[1],default_color[2],default_color[3],default_color[4]
+						return addon:Getcolor_CB()
+						end,
+						
+						set = function(info, r, g, b, a)
+						--print(r, g, b, a) 
+						default_color_CB = {r, g, b, a}
+						addon:Setcolor_CB(default_color_CB)
+						
+						end,
+						},
+						TargetCBcolor = {
+						type = "color",
+						hasAlpha = true,
+						name = "Target Bar Color",
+						desc = "Change the color of Target CastBar.",
+						get = function(info) 
+							--return default_color[1],default_color[2],default_color[3],default_color[4]
+						return addon:Getcolor_TB()
+						end,
+						
+						set = function(info, r, g, b, a)
+						--print(r, g, b, a) 
+						default_color_TB = {r, g, b, a}
+						addon:Setcolor_TB(default_color_TB)
+						
+						end,
+						},
+					}
+			},
+			}
+
+			
+			}
+		
+			
+		local defaults = {
+			profile = {
+				minimapHide = false,		
+				minimapPos = 204,
+				show_player = true, 
+				show_target = true, 
+				show_focus = true, 
+				show_pet = true, 
+				colorcastbarCB = default_color_CB,
+				colorcastbarTB = default_color_TB,
+				frameCoord={},
+			
+			}
+		}
+
+
 
 local CastingBarShowContent = function(selfB)
-	if not selfB.locked then
-		selfB:SetAlpha(1)
-		selfB.bar.flash:Hide()
-		selfB.bar.spark:Hide()
-		selfB.bar.timer:Hide()
-		if selfB.lag then selfB.lag:Hide() end
-		selfB.bar:SetStatusBarColor(.2,.2,.2)
-		selfB.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
-		selfB.resize:Show();
-	else
-		selfB:SetAlpha(0)
-		selfB.bar.flash:Show()
-		selfB.bar.spark:Show()
-		if show_timer then selfB.bar.timer:Show() end
-		if selfB.lag then selfB.lag:Show() end
-		selfB.bar:SetStatusBarColor(unpack(default_color))
-		selfB.resize:Hide()
-		
-		selfB:SetScript("OnDragStop", function(self)
-		self.isMoving=false;
-		self:StopMovingOrSizing();
+			if not selfB.locked then
+				selfB:SetAlpha(1)
+				selfB.bar.flash:Hide()
+				selfB.bar.spark:Hide()
+				selfB.bar.timer:Hide()
+				if selfB.lag then selfB.lag:Hide() end
+				selfB.bar:SetStatusBarColor(.2,.2,.2)
+				selfB.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
+				selfB.resize:Show();
+			else
+				selfB:SetAlpha(0)
+				selfB.bar.flash:Show()
+				selfB.bar.spark:Show()
+				if show_timer then selfB.bar.timer:Show() end
+				if selfB.lag then selfB.lag:Show() end
+				selfB.bar:SetStatusBarColor(unpack(default_color_CB))
+				selfB.resize:Hide()
 				
-		end)
-		
-	end
+				selfB:SetScript("OnDragStop", function(self)
+				self.isMoving=false;
+				self:StopMovingOrSizing();
+						
+				end)
+				
+			end
 end
 
 function addon:OnInitialize()
+		
+	addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
 
-addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
+	local castbars = { -- load the last value savec in the profil
+		player = addon.db.profile.show_player, 
+		target = addon.db.profile.show_target,
+		pet = addon.db.profile.show_pet, 	
+		focus = addon.db.profile.show_focus,
+		}
+		
+	default_color_CB = addon.db.profile.colorcastbarCB
+	default_color_TB = addon.db.profile.colorcastbarTB
+	
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("CastBarsEZ", options, {"ECB", "ecb","EZCBB"})
+		AceConfigDialog:AddToBlizOptions("CastBarsEZ") -- frame Option Addon interface
 
-local CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
-type = "data source",
-text = "CastBars_EZ",
-icon = "Interface\\Icons\\Spell_nature_lightning",
-OnClick = 	function(_, button)                
+		--icon minimap
+		local CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
+		type = "data source",
+		text = "CastBars_EZ",
+		icon = "Interface\\Icons\\Spell_nature_lightning",
+		OnClick = 	function(_, button)                
 
-					--if button == "LeftButton" then 
-					
-					--end
-					--if button == "RightButton" then 
-					
-					for unit, enable in pairs(castbars) do
-					
-					local castbar = _G[unit.."ezCastBar"]
-					
-					castbar.locked = not castbar.locked
-					if enable then
-						if castbar then
+					if button == "LeftButton" then 
+						LibStub("AceConfigDialog-3.0"):Open("CastBarsEZ")
+					end
+							
+					if button == "RightButton" then 
+							
+							for unit, enable in pairs(castbars) do
+							
+							--print(unit,enable)
+							local castbar = _G[unit.."ezCastBar"]
+							
+
+								if enable then
+								castbar.locked = not castbar.locked							
 								
-								castbar:RegisterForDrag("LeftButton")
-								castbar:EnableMouse(true)
-								castbar.bar.text:SetText(unit)
-								castbar:Show()
-								CastingBarShowContent(castbar)
+									if castbar then
+											
+											castbar:RegisterForDrag("LeftButton")
+											castbar:EnableMouse(true)
+											castbar.bar.text:SetText(unit)
+											castbar:Show()
+											CastingBarShowContent(castbar)
+									end
+								end
+								
+							end
+							
 								
 							
-							end
-						end
+						
 					end
 					
-						
-					
-					--end	 
-			end,
-OnTooltipShow = function(tt)
-                tt:AddLine("CastBarsEZ version  : |cffffff00".."2".."|r")
-                tt:AddLine("|cffffff00Click|r to Hide/Show and move the castbars.")
-
-				end,
-})
+					end,
+		OnTooltipShow = function(tt)
+						tt:AddLine("CastBarsEZ version  : |cffffff00".."2".."|r")
+						tt:AddLine("|cffffff00Click|right to Hide/Show and move the castbars.")
+						tt:AddLine("|cffffff00Click|left to Show the panel option.")
+						end,
+		})
 
 
 icon:Register("CastBars_EZ", CastBarsEZLDB, self.db.profile.minimap)
 self:RegisterChatCommand("CastBars_EZ", "CommandTheCastBars_EZ")
 
+
+
+end
+------------------------------------------
+--- Color casts bar
+------------------------------------------
+---Player-
+function addon:Getcolor_CB()
+	  
+   return 
+   unpack(addon.db.profile.colorcastbarCB)
+
 end
 
+function addon:Setcolor_CB()
+  
+	if addon.db.profile.colorcastbarCB ~= (default_color_CB) then
+        
+		addon.db.profile.colorcastbarCB = (default_color_CB)
+    end
+end
+----Target Cast bar
+function addon:Getcolor_TB()
+	  
+   return 
+   unpack(addon.db.profile.colorcastbarTB)
 
+end
+
+function addon:Setcolor_TB()
+  
+	if addon.db.profile.colorcastbarTB ~= (default_color_TB) then
+        
+		addon.db.profile.colorcastbarTB = (default_color_TB)
+    end
+end
+------------------------------------------
+	
 
 
 
@@ -134,40 +324,35 @@ local CastingBarHideContent = function(selfB)
 		selfB.bar.spark:Show()
 		if show_timer then selfB.bar.timer:Show() end
 		if selfB.lag then selfB.lag:Show() end
-		selfB.bar:SetStatusBarColor(unpack(default_color))
+		print(unpack(default_color_CB))
+		selfB.bar:SetStatusBarColor(unpack(default_color_CB))
 		selfB.resize:Hide()
 		
 		selfB:SetScript("OnDragStop", function(selfB)
 		selfB.isMoving=false;
 		selfB:StopMovingOrSizing();
 		
-		-- SAve position
+		-- Save position
 		local point, relativeTo, relativePoint, xOfs, yOfs = selfB:GetPoint()
-		--print(point, relativeTo, relativePoint, xOfs, yOfs)
-
-		
+		print(point, relativeTo, relativePoint, xOfs, yOfs)
+		local W = selfB:GetWidth()
+		local H = selfB:GetHeight()
 		
 		addon.db.profile.frameCoord[selfB.unit] ={}
 		addon.db.profile.frameCoord[selfB.unit].Point = point
 		addon.db.profile.frameCoord[selfB.unit].RelativePoint = relativePoint
 		addon.db.profile.frameCoord[selfB.unit].xOfs = xOfs
 		addon.db.profile.frameCoord[selfB.unit].yOfs = yOfs
+		addon.db.profile.frameCoord[selfB.unit].w = W
+		addon.db.profile.frameCoord[selfB.unit].h = H		
 		
-		--opts.relativePoint = relativePoint
+	
 		
 		
 		end)
 		
 	end
 end
--- Create minimap button
-
-
-
-
-
--- Castbar function
-
 
 
 local CastingBarFinishSpell = function(self, barSpark, barFlash)
@@ -185,6 +370,61 @@ end
 
 local MakeCastBar = function(unit, enable)
 	local frame = _G[unit.."ezCastBar"] or CreateFrame("frame", unit.."ezCastBar", UIParent, "ezCastBarTemplate")
+	
+	
+	-- Ajouter ici 
+	if unit == "player" then
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W = addon.db.profile.frameCoord[unit].w
+		C = addon.db.profile.colorcastbarCB
+
+	frame:SetStatusBarColor(unpack(C))
+	frame:SetPoint(rel,UIParent,rel,x,y)
+	frame:SetHeight(H)
+	frame:SetWidth(W)
+	end
+	
+	if unit == "target" then
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W =addon.db.profile.frameCoord[unit].w
+		C = addon.db.profile.colorcastbarTB
+
+	frame:SetStatusBarColor(unpack(C))
+	frame:SetPoint(rel,UIParent,rel,x,y)
+	frame:SetHeight(H)
+	frame:SetWidth(W)
+	end	
+	
+	if unit == "pet" then
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W =addon.db.profile.frameCoord[unit].w
+	frame:SetPoint(rel,UIParent,rel,x,y)
+	frame:SetHeight(H)
+	frame:SetWidth(W)
+	end	
+	
+	if unit == "focus" then
+		x = addon.db.profile.frameCoord[unit].xOfs	
+		y = addon.db.profile.frameCoord[unit].yOfs
+		rel= addon.db.profile.frameCoord[unit].RelativePoint
+		H = addon.db.profile.frameCoord[unit].h
+		W =addon.db.profile.frameCoord[unit].w
+	frame:SetPoint(rel,UIParent,rel,x,y)
+	frame:SetHeight(H)
+	frame:SetWidth(W)
+	end
+	
+	
+	
 	
 	if unit == "player" then
 		frame.lag = _G[frame:GetName().."Lag"] or frame.bar:CreateTexture(frame:GetName().."Lag", "BORDER")
@@ -278,7 +518,15 @@ local MakeCastBar = function(unit, enable)
 			
 			if unit == 'player' then notInterruptible = false end
 			
-			self.bar:SetStatusBarColor(unpack(default_color))
+			if unit == 'player' then 
+			
+			self.bar:SetStatusBarColor(unpack(default_color_CB))
+			
+			else
+			self.bar:SetStatusBarColor(unpack(default_color_TB))
+			
+			end
+			
 			self.bar.spark:Show()
 			
 			if self.lag then self.lag:Show() end
@@ -301,7 +549,15 @@ local MakeCastBar = function(unit, enable)
 			--if notInterruptible then -- addded in WOLTK--
 				--self.bar:SetStatusBarColor(unpack(nointerrupt_color)) 
 			--else 
-				self.bar:SetStatusBarColor(unpack(default_color))
+			
+			if  unit == 'player' then 
+			
+			self.bar:SetStatusBarColor(unpack(default_color_CB))
+			
+			else
+			self.bar:SetStatusBarColor(unpack(default_color_TB))
+			
+			end
 			--end
 			
 			
@@ -363,7 +619,7 @@ local MakeCastBar = function(unit, enable)
 				self.maxValue = (endTime - startTime) / 1000
 				self.bar:SetMinMaxValues(0, self.maxValue)
 				if not self.casting then
-					self.bar:SetStatusBarColor(unpack(default_color))
+					self.bar:SetStatusBarColor(unpack(default_color_CB))
 					self.bar.spark:Show()
 					self.bar.flash:SetAlpha(0)
 					self.bar.flash:Hide()
@@ -547,6 +803,7 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 		for unit, enable in pairs(castbars) do
 			if enable then
 				MakeCastBar(unit, enable)
+				
 			end
 		end
 	end	
@@ -575,6 +832,7 @@ SlashCmdList["CastBars_EZ"] = function(cmd)
 					castbar:Show()
 				end
 				CastingBarHideContent(castbar)
+				
 			end
 		end
 	end
