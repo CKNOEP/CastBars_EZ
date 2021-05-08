@@ -11,6 +11,8 @@ local default_color_TB = { 1, .7, 0, 1}
 local show_text = true
 local show_timer = true
 
+SetCVar("ffxGlow", 0)
+
 local castbars = { 
 	--default value 
 	player = true, 
@@ -257,14 +259,20 @@ function addon:OnInitialize()
 		OnClick = 	function(_, button)                
 
 					if button == "LeftButton" then 
+						
+						if LibStub("AceConfigDialog-3.0").OpenFrames["CastBarsEZ"] then
+						LibStub("AceConfigDialog-3.0"):Close("CastBarsEZ")
+						else
 						LibStub("AceConfigDialog-3.0"):Open("CastBarsEZ")
+						end 
+						
 					end
 							
 					if button == "RightButton" then 
 							
 							for unit, enable in pairs(castbars) do
 							
-							print("parse castbars",unit,enable)
+							--z"parse castbars",unit,enable)
 							local castbar = _G[unit.."ezCastBar"]
 							
 
@@ -404,7 +412,7 @@ end
 local MakeCastBar = function(unit, enable)
 	local frame = _G[unit.."ezCastBar"] or CreateFrame("frame", unit.."ezCastBar", UIParent, "ezCastBarTemplate")
 	
-	print("Make",unit)
+	--print("Make",unit)
 	-- Ajouter ici 
 	if unit == "player" then
 		x = addon.db.profile[unit].xOfs	
