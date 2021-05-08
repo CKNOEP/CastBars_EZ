@@ -1,3 +1,5 @@
 <<<<<<< HEAD
+2021-05-08
+now we can change and save color, position and simension for the castbars
 2021-04-19
 Ready TBC Classic, beta test ok
