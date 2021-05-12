@@ -21,23 +21,38 @@ local castbars = {
 	focus = true, 
 }
 
-
-		local options = {
+local function getOptions()
+	if not options then
+		options = {
 		
 			handler = CastBarsEZ,
 			type = "group",
 			args = {
 			layoutmode = {
-					type = "toggle",
+					type = "execute",
 					name = "layoutmode : move and resize castbars",
 					width = "full",
 					desc = "layoutmode : move and resize castbars",
-					get = function()
-					
+					func = function()
+							for unit, enable in pairs(castbars) do
+												
+							castbar = _G[unit.."ezCastBar"]
+								if enable then
+								castbar.locked = not castbar.locked							
+								
+									if castbar then
+										
+											castbar:RegisterForDrag("LeftButton")
+											castbar:EnableMouse(true)
+											castbar.bar.text:SetText(unit)
+											castbar:Show()
+											CastingBarShowContent(castbar)
+									end
+								end
+								
+							end
 					end,
-					set = function(info, value)
 					
-					end,
 					order = 5
 			},
 			visibility = {
@@ -156,10 +171,14 @@ local castbars = {
 					}
 			},
 			}
-
 			
 			}
-		
+	
+	
+	end
+	
+	return options
+end		
 			
 		local defaults = {
 			profile = {
@@ -205,8 +224,7 @@ local castbars = {
 		}
 
 
-
-local CastingBarShowContent = function(selfB)
+CastingBarShowContent = function(selfB)
 			if not selfB.locked then
 				selfB:SetAlpha(1)
 				selfB.bar.flash:Hide()
@@ -228,7 +246,11 @@ local CastingBarShowContent = function(selfB)
 				selfB:SetScript("OnDragStop", function(self)
 				self.isMoving=false;
 				self:StopMovingOrSizing();
-						
+				end)
+				
+				selfB:SetScript("OnSizeChanged", function(self)
+				self.isMoving=false;
+				self:StopMovingOrSizing();				
 				end)
 				
 			end
@@ -236,8 +258,10 @@ end
 
 function addon:OnInitialize()
 		
-	addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
-
+	addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, false)
+	profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)-- fill in the profile section
+	
+	
 	local castbars = { -- load the last value savec in the profil
 		player = addon.db.profile.show_player, 
 		target = addon.db.profile.show_target,
@@ -248,31 +272,46 @@ function addon:OnInitialize()
 	default_color_CB = addon.db.profile.colorcastbarCB
 	default_color_TB = addon.db.profile.colorcastbarTB
 	
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("CastBarsEZ", options, {"ECB", "ecb","EZCBB"})
-		AceConfigDialog:AddToBlizOptions("CastBarsEZ") -- frame Option Addon interface
 
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("CastBarsEZ", getOptions, {"ECB", "ecb","EZCBB"})
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("Profiles", profileOptions)
+	
+	AceConfigDialog:AddToBlizOptions("CastBarsEZ","CastBarsEZ") -- frame Option Addon interface
+	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "CastBarsEZ")
+	
+	AceConfigDialog:SetDefaultSize("CastBarsEZ", 600, 200)
+		
 		--icon minimap
 		local CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
 		type = "data source",
 		text = "CastBars_EZ",
 		icon = "Interface\\Icons\\Spell_nature_lightning",
 		OnClick = 	function(_, button)                
-
+print(button)
 					if button == "LeftButton" then 
 						
 						if LibStub("AceConfigDialog-3.0").OpenFrames["CastBarsEZ"] then
 						LibStub("AceConfigDialog-3.0"):Close("CastBarsEZ")
 						else
 						LibStub("AceConfigDialog-3.0"):Open("CastBarsEZ")
+						--InterfaceOptionsFrame_OpenToCategory("Profiles")
 						end 
 						
 					end
-							
+					
+					if button == "MiddleButton" then 
+						
+
+						InterfaceOptionsFrame_OpenToCategory("Profiles")
+		
+						
+					end		
+					
 					if button == "RightButton" then 
 							
 							for unit, enable in pairs(castbars) do
 							
-							--z"parse castbars",unit,enable)
+							--"parse castbars",unit,enable)
 							local castbar = _G[unit.."ezCastBar"]
 							
 
@@ -298,9 +337,10 @@ function addon:OnInitialize()
 					
 					end,
 		OnTooltipShow = function(tt)
-						tt:AddLine("CastBarsEZ version  : |cffffff00".."2".."|r")
-						tt:AddLine("|cffffff00Click|right to Hide/Show and move the castbars.")
-						tt:AddLine("|cffffff00Click|left to Show the panel option.")
+						tt:AddLine("CastBarsEZ version  : |cffffff00".."2.5.1".."|r")
+						tt:AddLine("|cffffff00Click|Right to Hide/Show and move the castbars.")
+						tt:AddLine("|cffffff00Click|Left to Show the panel option.")
+						tt:AddLine("|cffffff00Click|MiddleButton to Manage Profiles in the the panel option.")
 						end,
 		})
 
@@ -347,7 +387,7 @@ end
 ------------------------------------------
 
 
-local CastingBarHideContent = function(selfB)
+CastingBarHideContent = function(selfB)
 	if not selfB.locked then
 		selfB:SetAlpha(1)
 		selfB.bar.flash:Hide()
@@ -376,7 +416,7 @@ local CastingBarHideContent = function(selfB)
 		
 		local W = selfB:GetWidth()
 		local H = selfB:GetHeight()
-		
+		--print(point, relativeTo, relativePoint, xOfs, yOfs,H,W)
 		
 		
 		
@@ -845,7 +885,7 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 		end
 
 		for unit, enable in pairs(castbars) do
-			print("Make CB",unit,castbars[unit])
+			--print("Make CB",unit,castbars[unit])
 			
 			if enable then
 				MakeCastBar(unit, enable)
