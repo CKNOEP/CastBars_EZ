@@ -258,7 +258,7 @@ end
 
 function addon:OnInitialize()
 		
-	addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, false)
+	addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
 	profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)-- fill in the profile section
 	
 	
@@ -287,7 +287,7 @@ function addon:OnInitialize()
 		text = "CastBars_EZ",
 		icon = "Interface\\Icons\\Spell_nature_lightning",
 		OnClick = 	function(_, button)                
-print(button)
+--print(button)
 					if button == "LeftButton" then 
 						
 						if LibStub("AceConfigDialog-3.0").OpenFrames["CastBarsEZ"] then
