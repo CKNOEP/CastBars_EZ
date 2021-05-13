@@ -21,9 +21,9 @@ local castbars = {
 	focus = true, 
 }
 
-local function getOptions()
-	if not options then
-		options = {
+function EZCB_getOptions()
+	if not EZCB_options then
+		EZCB_options = {
 		
 			handler = CastBarsEZ,
 			type = "group",
@@ -177,7 +177,7 @@ local function getOptions()
 	
 	end
 	
-	return options
+	return EZCB_options
 end		
 			
 		local defaults = {
@@ -258,8 +258,8 @@ end
 
 function addon:OnInitialize()
 		
-	addon.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
-	profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)-- fill in the profile section
+	self.db = LibStub("AceDB-3.0"):New("CastBars_EZDB", defaults, true)
+	profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)-- fill in the profile section
 	
 	
 	local castbars = { -- load the last value savec in the profil
@@ -273,7 +273,7 @@ function addon:OnInitialize()
 	default_color_TB = addon.db.profile.colorcastbarTB
 	
 
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("CastBarsEZ", getOptions, {"ECB", "ecb","EZCBB"})
+	LibStub("AceConfig-3.0"):RegisterOptionsTable("CastBarsEZ", EZCB_getOptions, {"ECB", "ecb","EZCBB"})
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Profiles", profileOptions)
 	
 	AceConfigDialog:AddToBlizOptions("CastBarsEZ","CastBarsEZ") -- frame Option Addon interface
