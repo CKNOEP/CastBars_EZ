@@ -23,7 +23,7 @@ local castbars = {
 
 function EZCB_getOptions()
 	if not EZCB_options then
-		EZCB_options = {
+	EZCB_options = {
 		
 			handler = CastBarsEZ,
 			type = "group",
@@ -170,11 +170,245 @@ function EZCB_getOptions()
 						},
 					}
 			},
-			}
 			
+			Position = {
+			type ="group",
+			name = "Position",
+			childGroups = "tab",
+            --inline = true,
+            
+	
+			--	childGroups = "tab",
+					args = {
+					playerCB = {	
+					type="group",
+					name="Player CB",
+					order = 10,
+					childGroups = "tab",
+						args ={
+						x = {
+							order = 20,
+							type = "input",
+							name = "X Offset",
+							desc = "Offset in X direction (horizontal) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						y = {
+							order = 21,
+							type = "input",
+							name = "Y Offset",
+							desc = "Offset in Y direction (vertical) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						},		
+					},
+					TargetCB = {	
+					type="group",
+					name="Target CB",
+					order = 20,
+					childGroups = "tab",
+						args ={
+						x = {
+							order = 22,
+							type = "input",
+							name = "X Offset",
+							desc = "Offset in X direction (horizontal) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						y = {
+							order = 23,
+							type = "input",
+							name = "Y Offset",
+							desc = "Offset in Y direction (vertical) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						},		
+					},
+					FocusCB = {	
+					type="group",
+					name="Focus CB",
+					order = 30,
+					childGroups = "tab",
+						args ={
+						x = {
+							order = 24,
+							type = "input",
+							name = "X Offset",
+							desc = "Offset in X direction (horizontal) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						y = {
+							order = 25,
+							type = "input",
+							name = "Y Offset",
+							desc = "Offset in Y direction (vertical) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						},		
+					},
+					PetCB = {	
+					type="group",
+					name="Pet CB",
+					order = 40,
+					childGroups = "tab",
+						args ={
+						x = {
+							order = 26,
+							type = "input",
+							name = "X Offset",
+							desc = "Offset in X direction (horizontal) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},
+						y = {
+							order = 27,
+							type = "input",
+							name = "Y Offset",
+							desc = "Offset in Y direction (vertical) from the given anchor point.",
+							get = posGet,
+							set = posSet,
+							dialogControl = "NumberEditBox",
+						},	
+					},
+					},
+           
+					
+					},
+			},	
+			Dimension = {
+			type ="group",
+			name = "Size",
+			childGroups = "tab",
+            --inline = true,
+            
+	
+			--	childGroups = "tab",
+					args = {
+					playerCB = {	
+					type="group",
+					name="Player CB",
+					order = 10,
+					childGroups = "tab",
+						args ={
+						h = {
+							order = 20,
+							type = "input",
+							name = "Height",
+							desc = "Height",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						w = {
+							order = 21,
+							type = "input",
+							name = "Width",
+							desc = "Width",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						},		
+					},
+					TargetCB = {	
+					type="group",
+					name="Target CB",
+					order = 20,
+					childGroups = "tab",
+						args ={
+						h = {
+							order = 22,
+							type = "input",
+							name = "Height",
+							desc = "Height",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						w = {
+							order = 23,
+							type = "input",
+							name = "Width",
+							desc = "Width",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						},		
+					},
+					FocusCB = {	
+					type="group",
+					name="Focus CB",
+					order = 30,
+					childGroups = "tab",
+						args ={
+						h = {
+							order = 24,
+							type = "input",
+							name = "Height",
+							desc = "Height",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						w = {
+							order = 25,
+							type = "input",
+							name = "Width",
+							desc = "Width",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						},		
+					},
+					PetCB = {	
+					type="group",
+					name="Pet CB",
+					order = 40,
+					childGroups = "tab",
+						args ={
+						h = {
+							order = 26,
+							type = "input",
+							name = "Height",
+							desc = "Height",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},
+						w = {
+							order = 27,
+							type = "input",
+							name = "Width",
+							desc = "Width",
+							get = sizeGet,
+							set = sizeSet,
+							dialogControl = "NumberEditBox",
+						},	
+					},
+					},
+           
+					
+					},
 			}
-	
-	
+			}
+							
+						
+	}	
 	end
 	
 	return EZCB_options
@@ -279,7 +513,7 @@ function addon:OnInitialize()
 	AceConfigDialog:AddToBlizOptions("CastBarsEZ","CastBarsEZ") -- frame Option Addon interface
 	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "CastBarsEZ")
 	
-	AceConfigDialog:SetDefaultSize("CastBarsEZ", 600, 200)
+	AceConfigDialog:SetDefaultSize("CastBarsEZ", 620, 230)
 		
 		--icon minimap
 		local CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
@@ -386,6 +620,111 @@ function addon:Setcolor_TB()
 end
 ------------------------------------------
 
+--- Move the bars
+------------------------------------------
+	function posGet(info)
+				
+		local bar = string.lower(info[#info-1])
+		local bar = string.sub(bar,0,-3)
+		--print (value,info[#info],bar)
+		
+		local opt = info.arg or info[#info]
+		if opt == "x" then
+			local v = addon.db.profile[bar].xOfs
+						
+			return tostring(round(v, 5))
+		end
+		if opt == "y" then
+			local v = addon.db.profile[bar].yOfs
+			
+			return tostring(round(v, 5))
+		end
+		
+		return bar.config.position[opt]
+	end
+
+	function posSet(info, value)
+		
+		local bar = string.lower(info[#info-1])
+		local bar = string.sub(bar,0,-3)
+		--print (value,info[#info],bar)
+		rel= addon.db.profile[bar].RelativePoint
+		local frame = _G[bar.."ezCastBar"]
+		
+		local opt = info.arg or info[#info]
+		
+		if opt == "x" then
+			value = tonumber(value)
+		addon.db.profile[bar].xOfs = value	
+		
+			
+		frame:SetPoint(rel,UIParent,rel,value,addon.db.profile[bar].yOfs)
+		
+		end
+		
+		if opt == "y" then
+			value = tonumber(value)
+				
+		addon.db.profile[bar].yOfs = value
+		
+		frame:SetPoint(rel,UIParent,rel,addon.db.profile[bar].xOfs,value)
+		end
+		
+	
+	end
+------------------------------------------
+
+--- Resize the bars
+------------------------------------------
+	function sizeGet(info, value)
+		
+		local bar = string.lower(info[#info-1])
+		local bar = string.sub(bar,0,-3)
+		--print ("Size ",value,info[#info],bar)
+		
+		local opt = info.arg or info[#info]
+		if opt == "h" then
+			local v = addon.db.profile[bar].h
+						
+			return tostring(round(v, 5))
+		end
+		if opt == "w" then
+			local v = addon.db.profile[bar].w	
+			
+			return tostring(round(v, 5))
+		end
+		
+		return bar.config.position[opt]
+	end
+
+	function sizeSet(info, value)
+		
+		local bar = string.lower(info[#info-1])
+		local bar = string.sub(bar,0,-3)
+		--print ("Set:",value,info[#info],bar)
+		rel= addon.db.profile[bar].RelativePoint
+		local frame = _G[bar.."ezCastBar"]
+		
+		local opt = info.arg or info[#info]
+		
+		if opt == "h" then
+			value = tonumber(value)
+			addon.db.profile[bar].h = value	
+			frame:SetHeight(value)
+		end
+		
+		if opt == "w" then
+			value = tonumber(value)
+			addon.db.profile[bar].w = value
+			frame:SetWidth(value)
+		end
+		
+	
+	end
+function round(num, numDecimalPlaces)
+  local mult = 10^(numDecimalPlaces or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
 
 CastingBarHideContent = function(selfB)
 	if not selfB.locked then
@@ -452,7 +791,7 @@ end
 local MakeCastBar = function(unit, enable)
 	local frame = _G[unit.."ezCastBar"] or CreateFrame("frame", unit.."ezCastBar", UIParent, "ezCastBarTemplate")
 	
-	--print("Make",unit)
+	--print("Make",_G[unit.."ezCastBar"])
 	-- Ajouter ici 
 	if unit == "player" then
 		x = addon.db.profile[unit].xOfs	
