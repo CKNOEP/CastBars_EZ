@@ -11,6 +11,7 @@ local default_color_TB = { 1, .7, 0, 1}
 local show_text = true
 local show_timer = true
 
+
 SetCVar("ffxGlow", 0)
 
 local castbars = { 
@@ -31,7 +32,7 @@ function EZCB_getOptions()
 			layoutmode = {
 					type = "execute",
 					name = "layoutmode : move and resize castbars",
-					width = "full",
+					width = "normal",
 					desc = "layoutmode : move and resize castbars",
 					func = function()
 							for unit, enable in pairs(castbars) do
@@ -53,8 +54,9 @@ function EZCB_getOptions()
 							end
 					end,
 					
-					order = 5
+					order = 6
 			},
+	
 			visibility = {
 					type = "group",
 					name = "Visibility",
@@ -120,13 +122,50 @@ function EZCB_getOptions()
 								return addon.db.profile.show_pet
 							end,
 							set = function(info, value)
-							if addon.db.profile.show_pet ~= value then
-								addon.db.profile.show_pet = value
-								
-							end
+								if addon.db.profile.show_pet ~= value then
+									addon.db.profile.show_pet = value
+									
+								end
 							end,
 						 order = 14,   
 						},
+
+					
+					}
+			},
+			
+					icon_minimap = {
+					type = "group",
+					name = "Minimap Icon",
+					desc = "Show/Hide Minimap Icon",
+					order = 10,
+					args = {
+						minimapHide = {
+							type = "toggle",
+							
+							name = "Show/Hide Minimap Icon",
+							desc = "Show/Hide Minimap Icon",
+							get = function(info)
+								return not addon.db.profile.minimaphide
+								
+							end,
+							set = function(info, val)
+								if val then 
+								--icon:Show("CastBars_EZ")
+								toogle_MinimapButton(val)								
+								else 
+								icon:Hide("CastBars_EZ")
+								end
+							addon.db.profile.minimaphide = not val
+							end,
+								
+		
+						order = 11,
+						}
+	
+	
+
+					
 					}
 			},
 			colors = {
@@ -170,7 +209,6 @@ function EZCB_getOptions()
 						},
 					}
 			},
-			
 			Position = {
 			type ="group",
 			name = "Position",
@@ -416,12 +454,14 @@ end
 			
 		local defaults = {
 			profile = {
-				minimapHide = false,		
-				minimapPos = 204,
+				minimapPos = {},
+				minimaphide = true,		
+				
 				show_player = true, 
 				show_target = true, 
 				show_focus = true, 
 				show_pet = true, 
+
 				colorcastbarCB = default_color_CB,
 				colorcastbarTB = default_color_TB,
 				
@@ -501,6 +541,7 @@ function addon:OnInitialize()
 		target = addon.db.profile.show_target,
 		pet = addon.db.profile.show_pet, 	
 		focus = addon.db.profile.show_focus,
+		
 		}
 		
 	default_color_CB = addon.db.profile.colorcastbarCB
@@ -516,8 +557,8 @@ function addon:OnInitialize()
 	AceConfigDialog:SetDefaultSize("CastBarsEZ", 620, 230)
 		
 		--icon minimap
-		local CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
-		type = "data source",
+		CastBarsEZLDB = CastBarsEZLDB:NewDataObject("CastBars_EZ", {
+		type = "launcher",
 		text = "CastBars_EZ",
 		icon = "Interface\\Icons\\Spell_nature_lightning",
 		OnClick = 	function(_, button)                
@@ -578,13 +619,42 @@ function addon:OnInitialize()
 						end,
 		})
 
+	
+	if addon.db.profile.minimaphide == not true then
+		icon:Register("CastBars_EZ", CastBarsEZLDB, addon.db.profile.minimapPos)
+		addon:RegisterChatCommand("CastBars_EZ", "CommandTheCastBars_EZ")
+		icon:Hide("CastBars_EZ")
+		icon:Hide("CastBars_EZ")
+		
+	end
 
-icon:Register("CastBars_EZ", CastBarsEZLDB, self.db.profile.minimap)
-self:RegisterChatCommand("CastBars_EZ", "CommandTheCastBars_EZ")
-
-
+		
+	
 
 end
+------------------------------------------
+--- Show Hide Icon Minimap
+------------------------------------------
+function toogle_MinimapButton(arg)	
+	print("arg",arg)
+	if arg== true then
+
+		if icon:IsRegistered("CastBars_EZ") then
+		--print("registred",arg)
+		else
+		--print("Notregistred",arg)
+		icon:Register("CastBars_EZ", CastBarsEZLDB, addon.db.profile.minimapPos)
+		addon:RegisterChatCommand("CastBars_EZ", "CommandTheCastBars_EZ")		
+		end
+		icon:Show("CastBars_EZ")
+		
+	else
+		icon:Hide("CastBars_EZ")
+		
+	end
+end
+
+
 ------------------------------------------
 --- Color casts bar
 ------------------------------------------
