@@ -1,4 +1,4 @@
-## Interface: 5.1.0 BC classic
+## Interface: 20501
 ## Title: CastBars_EZ
 ## Notes: Move casting bars Easy
 ## Author: l'ancêtre , Fernir
