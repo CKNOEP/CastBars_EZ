@@ -976,7 +976,7 @@ local MakeCastBar = function(unit, enable)
 	end)
 	
 	frame:SetScript("OnEvent", function(self, event, ...)
-	print(event)
+	--print(event)
 		local arg1 = ...
 		if not self.locked then return end
 		local unit = self.unit
