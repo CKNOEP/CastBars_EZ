@@ -636,7 +636,7 @@ end
 --- Show Hide Icon Minimap
 ------------------------------------------
 function toogle_MinimapButton(arg)	
-	print("arg",arg)
+	--print("arg",arg)
 	if arg== true then
 
 		if icon:IsRegistered("CastBars_EZ") then
@@ -1028,9 +1028,9 @@ local MakeCastBar = function(unit, enable)
 			self.bar:SetMinMaxValues(0, self.maxValue)
 			local statusMin, statusMax = self.bar:GetMinMaxValues()
 			--print ("start ", statusMin, statusMax,self.value)
+			self.icon:SetTexture(texture)
 			self.bar:SetValue(self.value)
 			self.bar.text:SetText(text)
-			self.icon:SetTexture(texture)
 			self:SetAlpha(1)
 			self.holdTime = 0
 			self.casting = 1
@@ -1140,6 +1140,7 @@ local MakeCastBar = function(unit, enable)
 			self.bar:SetValue(self.value)
 			self.bar.text:SetText(name)
 			self.icon:SetTexture(texture)
+			--print(texture)
 			self.bar.spark:Hide()
 			self:SetAlpha(1)
 			self.holdTime = 0
