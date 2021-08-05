@@ -74,7 +74,6 @@ local basekeys={
 	desc=optstringfunc,
 	descStyle=optstring,
 	order=optmethodnumber,
-	forItem=optmethodnumber,
 	validate=optmethodfalse,
 	confirm=optmethodbool,
 	confirmText=optstring,

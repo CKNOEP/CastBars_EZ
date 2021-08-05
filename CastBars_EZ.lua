@@ -873,6 +873,8 @@ local MakeCastBar = function(unit, enable)
 		
 
 	--frame:SetStatusBarColor(unpack(C))
+	
+	frame:ClearAllPoints()
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
@@ -897,6 +899,7 @@ local MakeCastBar = function(unit, enable)
 		rel= addon.db.profile[unit].RelativePoint
 		H = addon.db.profile[unit].h
 		W =addon.db.profile[unit].w
+	frame:ClearAllPoints()
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
@@ -908,6 +911,7 @@ local MakeCastBar = function(unit, enable)
 		rel= addon.db.profile[unit].RelativePoint
 		H = addon.db.profile[unit].h
 		W =addon.db.profile[unit].w
+	frame:ClearAllPoints()
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
