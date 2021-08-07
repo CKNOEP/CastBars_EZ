@@ -1,4 +1,6 @@
-<<<<<<< HEAD
+<<<<<<< EZ CAST BAR >>>>>>>>
+2021-08-05
+Fix lua error with frame position and size
 2021-05-08
 now we can change and save color, position and simension for the castbars
 2021-04-19
