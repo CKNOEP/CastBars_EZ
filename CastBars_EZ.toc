@@ -1,4 +1,4 @@
-## Interface: 20501
+## Interface: 20502
 ## Title: CastBars_EZ
 ## Notes: Move casting bars Easy
 ## Author: l'ancêtre , Fernir
