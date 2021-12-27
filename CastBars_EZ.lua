@@ -508,6 +508,20 @@ CastingBarShowContent = function(selfB)
 				selfB.bar:SetStatusBarColor(.2,.2,.2)
 				selfB.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
 				selfB.resize:Show();
+				
+				selfB:SetScript("OnSizeChanged", function(self, arg1, arg2)
+				self.isMoving=false;
+				--print("Size changed!", "arg1:", arg1, "arg2:", arg2)
+				--print(string.sub(self:GetName(),0,-10))
+				local bar = (string.sub(self:GetName(),0,-10))
+				
+				addon.db.profile[bar].h = arg2
+				addon.db.profile[bar].w = arg1
+	
+				end)		
+			
+			
+			
 			else
 				selfB:SetAlpha(0)
 				selfB.bar.flash:Show()
@@ -702,12 +716,12 @@ end
 		if opt == "x" then
 			local v = addon.db.profile[bar].xOfs
 						
-			return tostring(round(v, 5))
+			return tostring(round(v, 1))
 		end
 		if opt == "y" then
 			local v = addon.db.profile[bar].yOfs
 			
-			return tostring(round(v, 5))
+			return tostring(round(v, 1))
 		end
 		
 		return bar.config.position[opt]
@@ -756,12 +770,12 @@ end
 		if opt == "h" then
 			local v = addon.db.profile[bar].h
 						
-			return tostring(round(v, 5))
+			return tostring(round(v, 1))
 		end
 		if opt == "w" then
 			local v = addon.db.profile[bar].w	
 			
-			return tostring(round(v, 5))
+			return tostring(round(v, 1))
 		end
 		
 		return bar.config.position[opt]
