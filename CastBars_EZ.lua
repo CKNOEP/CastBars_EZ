@@ -19,7 +19,7 @@ local castbars = {
 	player = true, 
 	target = true,
 	pet = true, 	
-	focus = true, 
+	--focus = false, 
 }
 
 function EZCB_getOptions()
@@ -45,7 +45,7 @@ function EZCB_getOptions()
 										
 											castbar:RegisterForDrag("LeftButton")
 											castbar:EnableMouse(true)
-											castbar.bar.text:SetText(unit)
+											castbar.bar.text:SetText(unit..' : Move and resize')
 											castbar:Show()
 											CastingBarShowContent(castbar)
 									end
@@ -97,6 +97,8 @@ function EZCB_getOptions()
 							end,
 						 order = 12,   
 						},
+										--[[
+			
 						focus_cb = {
 							type = "toggle",
 							
@@ -112,7 +114,7 @@ function EZCB_getOptions()
 								end
 							end,
 						order = 13,    
-						},
+						},	--]]
 						pet_cb = {
 							type = "toggle",
 							
@@ -138,7 +140,7 @@ function EZCB_getOptions()
 					type = "group",
 					name = "Minimap Icon",
 					desc = "Show/Hide Minimap Icon",
-					order = 10,
+					order = 9,
 					args = {
 						minimapHide = {
 							type = "toggle",
@@ -160,7 +162,7 @@ function EZCB_getOptions()
 							end,
 								
 		
-						order = 11,
+						order = 15,
 						}
 	
 	
@@ -221,7 +223,7 @@ function EZCB_getOptions()
 					playerCB = {	
 					type="group",
 					name="Player CB",
-					order = 10,
+					order = 20,
 					childGroups = "tab",
 						args ={
 						x = {
@@ -231,7 +233,7 @@ function EZCB_getOptions()
 							desc = "Offset in X direction (horizontal) from the given anchor point.",
 							get = posGet,
 							set = posSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						y = {
 							order = 21,
@@ -240,36 +242,38 @@ function EZCB_getOptions()
 							desc = "Offset in Y direction (vertical) from the given anchor point.",
 							get = posGet,
 							set = posSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						},		
 					},
 					TargetCB = {	
 					type="group",
 					name="Target CB",
-					order = 20,
+					order = 30,
 					childGroups = "tab",
 						args ={
 						x = {
-							order = 22,
+							order = 31,
 							type = "input",
 							name = "X Offset",
 							desc = "Offset in X direction (horizontal) from the given anchor point.",
 							get = posGet,
 							set = posSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox_CB_X",
 						},
 						y = {
-							order = 23,
+							order = 32,
 							type = "input",
 							name = "Y Offset",
 							desc = "Offset in Y direction (vertical) from the given anchor point.",
 							get = posGet,
 							set = posSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox_CB_Y",
 						},
 						},		
 					},
+									--[[
+				
 					FocusCB = {	
 					type="group",
 					name="Focus CB",
@@ -295,7 +299,7 @@ function EZCB_getOptions()
 							dialogControl = "NumberEditBox",
 						},
 						},		
-					},
+					},--]]
 					PetCB = {	
 					type="group",
 					name="Pet CB",
@@ -303,22 +307,22 @@ function EZCB_getOptions()
 					childGroups = "tab",
 						args ={
 						x = {
-							order = 26,
+							order = 41,
 							type = "input",
 							name = "X Offset",
 							desc = "Offset in X direction (horizontal) from the given anchor point.",
 							get = posGet,
 							set = posSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						y = {
-							order = 27,
+							order = 42,
 							type = "input",
 							name = "Y Offset",
 							desc = "Offset in Y direction (vertical) from the given anchor point.",
 							get = posGet,
 							set = posSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},	
 					},
 					},
@@ -338,56 +342,57 @@ function EZCB_getOptions()
 					playerCB = {	
 					type="group",
 					name="Player CB",
-					order = 10,
+					order = 50,
 					childGroups = "tab",
 						args ={
 						h = {
-							order = 20,
+							order = 51,
 							type = "input",
 							name = "Height",
 							desc = "Height",
 							get = sizeGet,
 							set = sizeSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						w = {
-							order = 21,
+							order = 52,
 							type = "input",
 							name = "Width",
 							desc = "Width",
 							get = sizeGet,
 							set = sizeSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						},		
 					},
 					TargetCB = {	
 					type="group",
 					name="Target CB",
-					order = 20,
+					order = 60,
 					childGroups = "tab",
 						args ={
 						h = {
-							order = 22,
+							order = 61,
 							type = "input",
 							name = "Height",
 							desc = "Height",
 							get = sizeGet,
 							set = sizeSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						w = {
-							order = 23,
+							order = 62,
 							type = "input",
 							name = "Width",
 							desc = "Width",
 							get = sizeGet,
 							set = sizeSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						},		
 					},
-					FocusCB = {	
+									--[[
+				FocusCB = {	
 					type="group",
 					name="Focus CB",
 					order = 30,
@@ -412,30 +417,30 @@ function EZCB_getOptions()
 							dialogControl = "NumberEditBox",
 						},
 						},		
-					},
+					},--]]
 					PetCB = {	
 					type="group",
 					name="Pet CB",
-					order = 40,
+					order = 70,
 					childGroups = "tab",
 						args ={
 						h = {
-							order = 26,
+							order = 71,
 							type = "input",
 							name = "Height",
 							desc = "Height",
 							get = sizeGet,
 							set = sizeSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},
 						w = {
-							order = 27,
+							order = 72,
 							type = "input",
 							name = "Width",
 							desc = "Width",
 							get = sizeGet,
 							set = sizeSet,
-							dialogControl = "NumberEditBox",
+							--dialogControl = "NumberEditBox",
 						},	
 					},
 					},
@@ -455,11 +460,11 @@ end
 		local defaults = {
 			profile = {
 				minimapPos = {},
-				minimaphide = true,		
+				minimaphide = false,		
 				
 				show_player = true, 
 				show_target = true, 
-				show_focus = true, 
+				--show_focus = false, 
 				show_pet = true, 
 
 				colorcastbarCB = default_color_CB,
@@ -479,13 +484,17 @@ end
 						yOfs = 0,
 						RelativePoint = "CENTER"
 				},
+				
+				--[[
+
+
 				focus = {
 						h = 12,
 						w = 200,
 						xOfs = 0,	
 						yOfs = 0,
 						RelativePoint = "CENTER"
-				},
+				},    --]]
 				pet = {
 						h = 12,
 						w = 200,
@@ -508,6 +517,26 @@ CastingBarShowContent = function(selfB)
 				selfB.bar:SetStatusBarColor(.2,.2,.2)
 				selfB.icon:SetTexture('Interface\\ICONS\\Trade_engineering')
 				selfB.resize:Show();
+				
+				
+				selfB:SetScript("OnSizeChanged", function(self, arg1, arg2)
+				self.isMoving=false;
+				--print("Size changed!", "arg1:", arg1, "arg2:", arg2)
+				--print(string.sub(self:GetName(),0,-10))
+				local bar = (string.sub(self:GetName(),0,-10))
+				
+				addon.db.profile[bar].h = arg2
+				addon.db.profile[bar].w = arg1
+				
+				
+				
+				--self:StopMovingOrSizing();				
+				end)
+				
+				selfB:SetScript("OnMouseUp", function()
+					self:StopMovingOrSizing()
+				end)
+								
 			else
 				selfB:SetAlpha(0)
 				selfB.bar.flash:Show()
@@ -522,10 +551,11 @@ CastingBarShowContent = function(selfB)
 				self:StopMovingOrSizing();
 				end)
 				
-				selfB:SetScript("OnSizeChanged", function(self)
-				self.isMoving=false;
-				self:StopMovingOrSizing();				
-				end)
+				selfB:SetScript("OnMouseUp", function()
+					self:StopMovingOrSizing()
+				end)			
+				
+			
 				
 			end
 end
@@ -540,7 +570,7 @@ function addon:OnInitialize()
 		player = addon.db.profile.show_player, 
 		target = addon.db.profile.show_target,
 		pet = addon.db.profile.show_pet, 	
-		focus = addon.db.profile.show_focus,
+		--focus = addon.db.profile.show_focus,
 		
 		}
 		
@@ -756,12 +786,12 @@ end
 		if opt == "h" then
 			local v = addon.db.profile[bar].h
 						
-			return tostring(round(v, 5))
+			return tostring(round(v, 1))
 		end
 		if opt == "w" then
 			local v = addon.db.profile[bar].w	
 			
-			return tostring(round(v, 5))
+			return tostring(round(v, 1))
 		end
 		
 		return bar.config.position[opt]
@@ -905,6 +935,8 @@ local MakeCastBar = function(unit, enable)
 	frame:SetWidth(W)
 	end	
 	
+	--[[
+			
 	if unit == "focus" then
 		x = addon.db.profile[unit].xOfs	
 		y = addon.db.profile[unit].yOfs
@@ -916,7 +948,7 @@ local MakeCastBar = function(unit, enable)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
 	end
-	
+	--]]
 	
 	
 	
@@ -1276,7 +1308,7 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 		if castbars.player == true then 
 			CastingBarFrame.showCastbar = false 
 			CastingBarFrame:UnregisterAllEvents()
-			TargetFrameSpellBar:SetScript("OnUpdate", function() end)
+			CastingBarFrame:SetScript("OnUpdate", function() end)
 		
 		end
 		
@@ -1287,11 +1319,11 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 			TargetFrameSpellBar:SetScript("OnUpdate", function() end)
 		end
 
-		if castbars.focus == true then 
-			FocusFrameSpellBar.showCastbar = false 
-			FocusFrameSpellBar:UnregisterAllEvents()
-			FocusFrameSpellBar:SetScript("OnUpdate", function() end)
-		end
+		--if castbars.focus == true then 
+		--	FocusFrameSpellBar.showCastbar = false 
+		--	FocusFrameSpellBar:UnregisterAllEvents()
+		--	FocusFrameSpellBar:SetScript("OnUpdate", function() end)
+		--end
 
 		if castbars.pet == true then 
 			PetCastingBarFrame.showCastbar = false 
