@@ -901,11 +901,12 @@ local MakeCastBar = function(unit, enable)
 		H  		= addon.db.profile.target.h
 		W  		= addon.db.profile.target.w
 		ColorCB = addon.db.profile.colorcastbarTB
-	
+
+	--print(rel,UIParent,rel,x,y)	
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
-	end	
+	end
 	
 	if unit == "pet" then
 		x = addon.db.profile[unit].xOfs	
