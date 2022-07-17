@@ -902,7 +902,7 @@ local MakeCastBar = function(unit, enable)
 		W  		= addon.db.profile.target.w
 		ColorCB = addon.db.profile.colorcastbarTB
 
-	--print(rel,UIParent,rel,x,y)	
+	--print("rel",rel,"parent",UIParent,"rel",rel,"x",x,"y",y)	
 	frame:SetPoint(rel,UIParent,rel,x,y)
 	frame:SetHeight(H)
 	frame:SetWidth(W)
