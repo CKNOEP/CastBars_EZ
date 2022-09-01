@@ -1,8 +1,8 @@
-## Interface: 20504
+## Interface: 30400
 ## Title: CastBars_EZ
 ## Notes: Move casting bars Easy
 ## Author: l'ancêtre , Fernir
-## Version: 2
+## Version: 3
 ## SavedVariables: CastBars_EZDB
 
 embeds.xml
