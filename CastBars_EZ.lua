@@ -649,7 +649,7 @@ end
 ------------------------------------------
 --- Show Hide Icon Minimap
 ------------------------------------------
-function toogle_MinimapButton(arg)	
+local function toogle_MinimapButton(arg)	
 	--print("arg",arg)
 	if arg== true then
 
