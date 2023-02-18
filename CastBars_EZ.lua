@@ -152,7 +152,7 @@ function EZCB_getOptions()
 							set = function(info, val)
 								if val then 
 								--icon:Show("CastBars_EZ")
-								toogle_MinimapButton(val)								
+								addon:toogle_MinimapButton(val)								
 								else 
 								icon:Hide("CastBars_EZ")
 								end
@@ -626,7 +626,7 @@ function addon:OnInitialize()
 					
 					end,
 		OnTooltipShow = function(tt)
-						tt:AddLine("CastBarsEZ version  : |cffffff00".."2.5.1".."|r")
+						tt:AddLine("CastBarsEZ version  : |cffffff00".."3.4.1".."|r")
 						tt:AddLine("|cffffff00Click|Right to Hide/Show and move the castbars.")
 						tt:AddLine("|cffffff00Click|Left to Show the panel option.")
 						tt:AddLine("|cffffff00Click|MiddleButton to Manage Profiles in the the panel option.")
@@ -649,7 +649,7 @@ end
 ------------------------------------------
 --- Show Hide Icon Minimap
 ------------------------------------------
-local function toogle_MinimapButton(arg)	
+function addon:toogle_MinimapButton(arg)	
 	--print("arg",arg)
 	if arg== true then
 
