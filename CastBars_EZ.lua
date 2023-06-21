@@ -1120,7 +1120,7 @@ local MakeCastBar = function(unit, enable)
 			end
 		elseif event == "UNIT_SPELLCAST_DELAYED" then
 			if self:IsShown() then
-				local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitCastingInfo(unit)
+				local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible,castID = UnitCastingInfo(unit)
 				if not name then
 					self:Hide()
 					return
@@ -1141,13 +1141,14 @@ local MakeCastBar = function(unit, enable)
 			end
 		elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 			--print ("chanelstart:",unit)
-		
-			local name, text, texture, startTime, endTime, isTradeSkill, castID = UnitChannelInfo(unit)
+			
+			local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, castID = UnitChannelInfo(unit)
 			--print (name, text, texture, startTime, endTime, isTradeSkill, castID)
 			if not name then
 				self:Hide()
 				return
 			end
+			
 			
 			if unit == 'player' then notInterruptible = false end
 			if self.lag then self.lag:Hide() end
@@ -1160,7 +1161,7 @@ local MakeCastBar = function(unit, enable)
 			self.bar.text:SetText(name)
 			self.icon:SetTexture(texture)
 			--print(texture)
-			self.bar.spark:Hide()
+			self.bar.spark:Show()
 			self:SetAlpha(1)
 			self.holdTime = 0
 			self.casting = nil
@@ -1170,6 +1171,26 @@ local MakeCastBar = function(unit, enable)
 			self.bar:SetStatusBarColor(unpack(default_color_CB)) 
 			
 			if self.showCastbar then self:Show() end
+			if castID == 47855 then--drain soul
+			--Tick
+				local channelingDuration = math.max(math.floor((endTime-startTime)/1000+0.5, 0))
+				local ticksRate = 3 -- Every 3 sec for Drain Soul -- getChannelingTicksRate(spellId, channelingDuration)
+				--print(ticksRate,channelingDuration)
+				if(ticksRate > 0) then
+					local barTicks = barTicks or {}
+					for i = 0, channelingDuration, ticksRate do
+						barTicks[i] = i
+					end
+				---print (castID)
+					
+					setBarTicks(ticksRate, channelingDuration, barTicks)
+							
+				end
+			else
+			cleanTicks()
+			end
+		
+		
 		elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
 		  --print ("chanel_Updatestart:",unit)
 			    if self:IsShown() then
@@ -1274,7 +1295,75 @@ local MakeCastBar = function(unit, enable)
 	end)
 
 end
+--Tick FActory
+local sparkfactory = {
+	__index = function(t,k)
+		local spark = playerezCastBar:CreateTexture(nil, 'OVERLAY')
+		t[k] = spark
+		spark:SetTexture("Interface\\CastingBar\\UI-CastingBar-Spark")
+		spark:SetVertexColor(1.0, 1.0, 1.0, 0.9)
+		spark:SetBlendMode('ADD')
+		spark:SetWidth(16)
+		spark:SetHeight(playerezCastBar:GetHeight()+10)
+		return spark
+	end
+}
+local barticks = setmetatable({}, sparkfactory)
 
+function setBarTicks(ticksRate, channelingDuration, barTicks)
+--print(ticksRate, channelingDuration, barTicks)
+	if( ticksRate and ticksRate > 0) then
+		local width = playerezCastBar:GetWidth()-- addon.db.profile[unit].w
+		for k = 0, channelingDuration, ticksRate do
+			local t = barticks[k] 
+			t:ClearAllPoints()
+			local w = width 
+			t:SetHeight(playerezCastBar:GetHeight()+10)
+			t:SetPoint("LEFT", playerezCastBar, "RIGHT",   - (k/3)*0.2 * w, 0 )
+			--print ("t pos",channelingDuration,k,barTicks[k],width,x, - (k/3)*0.2 * w)
+			t:Show()
+			
+		end
+		for k = channelingDuration+1,#barticks do
+			barticks[k]:Show()
+		end
+	else
+		cleanTicks()
+		for k = channelingDuration+1,#barticks do
+			barticks[k]:Hide()
+		end
+	
+	end
+end
+
+function cleanTicks()
+	for i=0,#barticks do
+		barticks[i]:Hide()
+	end
+end
+
+local channelingTicksRate = {
+	-- Rain of Fire
+	[5740] = 2, -- rank 1
+	[6219] = 2, -- rank 2
+	[11677] = 2, -- rank 3
+	[11678] = 2, -- rank 4
+	-- Drain Soul
+	[1120] = 3, -- rank 1
+	[8288] = 3, -- rank 2
+	[8289] = 3, -- rank 3
+	[11675] = 3, -- rank 4
+	[47855] = 3, -- rank 6
+}
+
+local function getChannelingTicksRate(spell, duration)
+	-- Spells longer than 15 seconds don't tick (afaik), maybe TODO check spells that don't tick and last less than 15 seconds
+	if duration > 15 then 
+		return 0
+	end
+	
+	return channelingTicksRate[spell] or 1
+end
 --CastBars_EZ:RegisterEvent('PLAYER_TALENT_UPDATE') not present in classic
 CastBars_EZ:RegisterEvent('PLAYER_ENTERING_WORLD')
 CastBars_EZ:RegisterEvent('ADDON_LOADED')
