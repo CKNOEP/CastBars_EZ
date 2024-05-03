@@ -1392,13 +1392,13 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 		end
 
 		if castbars.focus == true then 
-			if select(4, GetBuildInfo()) < 11502 then
-			FocusFrameSpellBar.showCastbar = false 
-			FocusFrameSpellBar:UnregisterAllEvents()
-			FocusFrameSpellBar:SetScript("OnUpdate", function() end)
+			if select(4, GetBuildInfo()) = 11502 then
+
 			--sinon
 			else	
-			
+			FocusFrameSpellBar.showCastbar = false 
+			FocusFrameSpellBar:UnregisterAllEvents()
+			FocusFrameSpellBar:SetScript("OnUpdate", function() end)		
 			--fin
 			end
 
