@@ -1,4 +1,4 @@
-## Interface: 11502
+## Interface: 11503
 ## Title: CastBars_EZ
 ## Notes: Move casting bars Easy
 ## Author: l'ancêtre , Fernir
@@ -7,4 +7,4 @@
 
 embeds.xml
 CastBars_EZ.xml
-CastBars_EZ.lua
+CastBars_EZ_Vanilla.lua
