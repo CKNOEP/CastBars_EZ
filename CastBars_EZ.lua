@@ -565,8 +565,8 @@ function addon:OnInitialize()
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("CastBarsEZ", EZCB_getOptions, {"ECB", "ecb","EZCBB"})
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Profiles", profileOptions)
 	
-	AceConfigDialog:AddToBlizOptions("CastBarsEZ","CastBarsEZ") -- frame Option Addon interface
-	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "CastBarsEZ")
+	AceConfigDialog:AddToBlizOptions("CastBarsEZ","CastBarsEZ",nil,"CastBarsEZ Options") -- frame Option Addon interface
+	AceConfigDialog:AddToBlizOptions("CastBarsEZ","Profiles", "CastBarsEZ", "Profiles")	
 	
 	AceConfigDialog:SetDefaultSize("CastBarsEZ", 620, 230)
 		
