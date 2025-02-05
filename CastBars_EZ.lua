@@ -76,7 +76,7 @@ function EZCB_getOptions()
 								--call function after profil 
 								if addon.db.profile.show_player ~= value then
 								addon.db.profile.show_player = value
-								
+								print (addon.db.profile.show_player)
 								end
 							end,
 						order = 11,
@@ -996,8 +996,32 @@ local MakeCastBar = function(unit, enable)
 	
 	frame:SetScript("OnEvent", function(self, event, ...)
 	--print(event)
+
 		local arg1 = ...
+		
+		
 		if not self.locked then return end
+		
+		-- show CastBar Only if option visibility = true
+		if self.unit == 'player' then
+			if addon.db.profile.show_player == false then return end
+		end
+		
+		if self.unit == 'target' then
+			if addon.db.profile.show_target == false then return end
+		end
+		
+		if self.unit == 'pet' then
+			if addon.db.profile.show_pet == false then return end
+		end
+		
+		
+		
+		
+		
+		
+		
+		
 		local unit = self.unit
 			--if  event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_TARGET_CHANGED" then
 			if  event == "PLAYER_ENTERING_WORLD"  then			
@@ -1369,11 +1393,11 @@ CastBars_EZ:RegisterEvent('PLAYER_ENTERING_WORLD')
 CastBars_EZ:RegisterEvent('ADDON_LOADED')
 CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 
-
+--print ("Addon loaded" , castbars.player )
 
 	if (event=='ADDON_LOADED' and arg1 == addonName) or event == 'PLAYER_ENTERING_WORLD' then
 	--if (event=='ADDON_LOADED' and arg1 == addonName) or event == 'PLAYER_ENTERING_WORLD' or event=='PLAYER_TALENT_UPDATE' then
-		--print ("Addon loaded" , castbars.player )
+		
 		
 		
 		

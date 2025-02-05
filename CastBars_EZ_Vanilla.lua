@@ -76,6 +76,7 @@ function EZCB_getOptions()
 								--call function after profil 
 								if addon.db.profile.show_player ~= value then
 								addon.db.profile.show_player = value
+								--print (addon.db.profile.show_player)
 								
 								end
 							end,
@@ -997,7 +998,21 @@ local MakeCastBar = function(unit, enable)
 	end)
 	
 	frame:SetScript("OnEvent", function(self, event, ...)
-	--print(event)
+	print(event,self,self.showCastbar,self.locked,frame.showCastbar,addon.db.profile.show_player,self.unit )
+		
+		-- show CastBar Only if option visibility = true
+		if self.unit == 'player' then
+			if addon.db.profile.show_player == false then return end
+		end
+		
+		if self.unit == 'target' then
+			if addon.db.profile.show_target == false then return end
+		end
+		
+		if self.unit == 'pet' then
+			if addon.db.profile.show_pet == false then return end
+		end
+		
 		local arg1 = ...
 		if not self.locked then return end
 		local unit = self.unit
