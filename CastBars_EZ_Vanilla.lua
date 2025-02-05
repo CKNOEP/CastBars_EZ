@@ -998,7 +998,7 @@ local MakeCastBar = function(unit, enable)
 	end)
 	
 	frame:SetScript("OnEvent", function(self, event, ...)
-	print(event,self,self.showCastbar,self.locked,frame.showCastbar,addon.db.profile.show_player,self.unit )
+	--print(event,self,self.showCastbar,self.locked,frame.showCastbar,addon.db.profile.show_player,self.unit )
 		
 		-- show CastBar Only if option visibility = true
 		if self.unit == 'player' then
