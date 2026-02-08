@@ -1411,14 +1411,10 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 
 		if addon.db.profile.hide_original_castbar then
 			if castbars.player == true then
-				if CastingBarFrame then
-					CastingBarFrame.showCastbar = false
-					CastingBarFrame:UnregisterAllEvents()
+				if PlayerCastingBarFrame then
+					PlayerCastingBarFrame:UnregisterAllEvents()
+					PlayerCastingBarFrame:Hide()
 				end
-				if TargetFrameSpellBar then
-					TargetFrameSpellBar:SetScript("OnUpdate", function() end)
-				end
-
 			end
 
 
