@@ -2,3 +2,6 @@
 .vs/CastBars_EZ/FileContentIndex/f458ec28-16aa-40f9-87a0-ca2a532b7317.vsidx
 .vs/slnx.sqlite
 /.vs
+
+# Old nested directory structure (artifact from incorrect git initialization)
+CastBars_EZ/
