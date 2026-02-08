@@ -129,6 +129,21 @@ function EZCB_getOptions()
 							end,
 						 order = 14,
 						},
+						hide_original = {
+							type = "toggle",
+
+							name = "Hide Original WoW Casting Bar",
+							desc = "Hide the original World of Warcraft casting bar",
+							get = function()
+								return addon.db.profile.hide_original_castbar
+							end,
+							set = function(info, value)
+								if addon.db.profile.hide_original_castbar ~= value then
+									addon.db.profile.hide_original_castbar = value
+								end
+							end,
+						 order = 15,
+						},
 
 
 					}
@@ -460,6 +475,7 @@ end
 				show_target = true,
 				show_focus = true,
 				show_pet = true,
+				hide_original_castbar = true,
 
 				colorcastbarCB = default_color_CB,
 				colorcastbarTB = default_color_TB,
@@ -1399,47 +1415,49 @@ CastBars_EZ:SetScript('OnEvent', function(self, event, arg1, ...)
 
 
 
-		if castbars.player == true then
-			if CastingBarFrame then
-				CastingBarFrame.showCastbar = false
-				CastingBarFrame:UnregisterAllEvents()
-			end
-			if TargetFrameSpellBar then
-				TargetFrameSpellBar:SetScript("OnUpdate", function() end)
-			end
-
-		end
-
-
-		if castbars.target == true then
-			if TargetFrameSpellBar then
-				TargetFrameSpellBar.showCastbar = false
-				TargetFrameSpellBar:UnregisterAllEvents()
-				TargetFrameSpellBar:SetScript("OnUpdate", function() end)
-			end
-		end
-
-		if castbars.focus == true then
-			if select(4, GetBuildInfo()) == 11502 then
-
-			--sinon
-			else
-				if FocusFrameSpellBar then
-					FocusFrameSpellBar.showCastbar = false
-					FocusFrameSpellBar:UnregisterAllEvents()
-					FocusFrameSpellBar:SetScript("OnUpdate", function() end)
+		if addon.db.profile.hide_original_castbar then
+			if castbars.player == true then
+				if CastingBarFrame then
+					CastingBarFrame.showCastbar = false
+					CastingBarFrame:UnregisterAllEvents()
 				end
-			--fin
+				if TargetFrameSpellBar then
+					TargetFrameSpellBar:SetScript("OnUpdate", function() end)
+				end
+
 			end
 
 
-		end
+			if castbars.target == true then
+				if TargetFrameSpellBar then
+					TargetFrameSpellBar.showCastbar = false
+					TargetFrameSpellBar:UnregisterAllEvents()
+					TargetFrameSpellBar:SetScript("OnUpdate", function() end)
+				end
+			end
 
-		if castbars.pet == true then
-			if PetCastingBarFrame then
-				PetCastingBarFrame.showCastbar = false
-				PetCastingBarFrame:UnregisterAllEvents()
-				PetCastingBarFrame:SetScript("OnUpdate", function() end)
+			if castbars.focus == true then
+				if select(4, GetBuildInfo()) == 11502 then
+
+				--sinon
+				else
+					if FocusFrameSpellBar then
+						FocusFrameSpellBar.showCastbar = false
+						FocusFrameSpellBar:UnregisterAllEvents()
+						FocusFrameSpellBar:SetScript("OnUpdate", function() end)
+					end
+				--fin
+				end
+
+
+			end
+
+			if castbars.pet == true then
+				if PetCastingBarFrame then
+					PetCastingBarFrame.showCastbar = false
+					PetCastingBarFrame:UnregisterAllEvents()
+					PetCastingBarFrame:SetScript("OnUpdate", function() end)
+				end
 			end
 		end
 
