@@ -1,0 +1,10 @@
+## Interface: 40400
+## Title: CastBars_EZ
+## Notes: Move casting bars Easy
+## Author: l'ancêtre , Fernir
+## Version: 3
+## SavedVariables: CastBars_EZDB
+
+embeds.xml
+CastBars_EZ.xml
+CastBars_EZ.lua
