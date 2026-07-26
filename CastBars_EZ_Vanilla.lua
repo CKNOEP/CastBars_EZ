@@ -11,6 +11,8 @@ local default_color_TB = { 1, .7, 0, 1}
 local show_text = true
 local show_timer = true
 
+if not CASTING_BAR_FLASH_STEP then CASTING_BAR_FLASH_STEP = 0.05 end
+if not CASTING_BAR_ALPHA_STEP then CASTING_BAR_ALPHA_STEP = 0.05 end
 
 SetCVar("ffxGlow", 0)
 
